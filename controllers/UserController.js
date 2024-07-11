@@ -31,6 +31,7 @@ exports.registerUser = async (req, res) => {
 
     // Répondre avec les détails de l'utilisateur et le token JWT
     res.status(201).json({
+      message: 'User created',
       user: newUser,
       token: jwToken
     });
@@ -60,6 +61,7 @@ exports.loginUser = async (req, res) =>
     const jwToken = generateToken(user);
     // Répondre avec les détails de l'utilisateur et le token JWT
     res.status(200).json({
+      message : 'Login successful',
       user,
       token: jwToken
     });
