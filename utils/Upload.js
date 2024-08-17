@@ -3,17 +3,16 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs-extra');
 
-// Crée une instance Express
-const app = express();
-
+const uploadDir = 'uploads/musics/';
 // Configuration du stockage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = 'uploads/musics/';
+       
+        
 
         fs.ensureDir(uploadDir)
-            .then(() =>cb(null, uploadDir))
-            .catch(err =>cb(err));
+            .then(() => cb(null, uploadDir))
+            .catch(err => cb(err));
     },
     filename: (req, file, cb) => {
         // Traite le nom du fichier pour éviter les doublons
@@ -21,8 +20,20 @@ const storage = multer.diskStorage({
         const fileName = originalName.replace(/\s+/g, '-').toLowerCase();
         const ext = path.extname(fileName);
         const baseName = path.basename(fileName, ext);
-        const finalName = `${baseName}-${Date.now()}${ext}`;
-        cb(null, finalName); // Nom final du fichier
+        const finalName = `${baseName}${ext}`;
+        
+        const filePath = path.join(uploadDir, finalName);
+
+        // Vérifier si le fichier existe déjà dans le répertoire 
+        fs.pathExists(filePath)
+            .then(exists => {
+                if (exists) {
+                    cb(new Error('Le fichier existe déjà.'));
+                } else {
+                    cb(null, finalName); // Si le fichier n'existe pas, continue l'upload
+                }
+            })
+            .catch(err => cb(err));
     }
 });
 
