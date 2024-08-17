@@ -1,9 +1,9 @@
-import sys
-import json
-import os
-from mutagen.id3 import ID3, ID3NoHeaderError, APIC
-from mutagen.mp4 import MP4
-from mutagen.mp3 import MP3  # Importer MP3 pour la durée
+import sys  # Pour la gestion des arguments de ligne de commande et des erreurs
+import json  # Pour la conversion des données en format JSON
+import os  # Pour les opérations liées au système de fichiers
+from mutagen.id3 import ID3, ID3NoHeaderError, APIC  # Pour lire les tags ID3 des fichiers MP3
+from mutagen.mp4 import MP4  # Pour lire les tags MP4 des fichiers M4A
+from mutagen.mp3 import MP3  # Pour lire la durée des fichiers MP3
 
 def get_audio_metadata(file_path):
     try:

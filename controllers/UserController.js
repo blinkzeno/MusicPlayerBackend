@@ -41,34 +41,34 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-exports.loginUser = async (req, res) =>
-{
-   const { email, password } = req.body;
 
-   try {
-    // Vérifier si l'utilisateur existe
-    let user = await userModel.findOne({ email });
+exports.loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-    if (!user) {
-      return res.status(400).send('User not found');
-    }
-    // Vérifier si le mot de passe est correct
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(400).send('Invalid password');
-    }
-    // Générer un token JWT pour l'utilisateur
-    const jwToken = generateToken(user);
-    // Répondre avec les détails de l'utilisateur et le token JWT
-    res.status(200).json({
-      message : 'Login successful',
-      user,
-      token: jwToken
-    });
+  try {
+   // Vérifier si l'utilisateur existe
+   let user = await userModel.findOne({ email });
 
-   }catch (error) {
-    console.error('Error logging in user:', error);
-    res.status(500).send('Error logging in user');
-  }
+   if (!user) {
+     return res.status(400).send('User not found');
+   }
+   // Vérifier si le mot de passe est correct
+   const isPasswordCorrect = await bcrypt.compare(password, user.password);
+   if (!isPasswordCorrect) {
+     return res.status(400).send('Invalid password');
+   }
+   // Générer un token JWT pour l'utilisateur
+   const jwToken = generateToken(user);
+   // Répondre avec les détails de l'utilisateur et le token JWT
+   res.status(200).json({
+     message: 'Login successful',
+     user,
+     token: jwToken
+   });
 
+  } catch (error) {
+   console.error('Error logging in user:', error);
+   res.status(500).send('Error logging in user');
+ }
 }
+

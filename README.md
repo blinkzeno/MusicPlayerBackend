@@ -1,72 +1,130 @@
-# MusicPlayerBackend
+Voici la mise à jour du guide d'installation avec les étapes pour créer un environnement de développement Python :
 
-### create development environment(python)
-```python
- python3 -m venv venv
-```
+---
 
- ### activate venv
- ```python
- source venv/bin/activate
- ```
- ### install dependencies
- ```python
- pip install -r requirements.txt
- ```
+## Guide d'Installation du Projet
 
+### Prérequis
 
-## install dependencies(node)
+Avant de commencer, assurez-vous que vous avez installé les éléments suivants sur votre système :
 
-```npm
-npm install
-```
+- [Node.js](https://nodejs.org/) (version LTS recommandée)
+- [Python 3](https://www.python.org/downloads/)
+- [MongoDB](https://www.mongodb.com/try/download/community) (ou utilisez un service cloud comme MongoDB Atlas)
 
-### install mongoDB
+### Étapes d'Installation
 
- **create .env file**
+1. **Clonez le Répertoire du Projet**
 
-**add port variable**
- (ex: PORT=3000)
+   Ouvrez un terminal et clonez le dépôt Git contenant le projet :
 
-**add database variable**
-(ex: MONGODB_URI=mongodb://localhost:27017/MusicPlayerBackend)
+   ```bash
+   git clone https://github.com/blinkzeno/MusicPlayerBackend.git
+   cd MusicPlayerBackend
+   ```
 
+2. **Installez les Dépendances Node.js**
 
-### start server
-```npm
-npm start
-```
+   Assurez-vous d'être dans le répertoire du projet, puis installez les dépendances Node.js avec npm :
 
-## app route
- -> http://localhost:3000/api/
+   ```bash
+   npm install
+   ```
 
- ## user route
- -> http://localhost:3000/api/users/register
+   Cette commande installera toutes les dépendances listées dans le fichier `package.json`.
 
- -> http://localhost:3000/api/users/login
- 
-***create a user***
+3. **Configurez les Variables d'Environnement**
 
-   email: admin@gmail.com
+   Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires. Exemple de contenu pour `.env` :
 
-   password: admin
+   ```plaintext
+   PORT=5000
+   MONGODB_URI=mongodb://localhost:27017/votre_base_de_donnees
+   JWT_SECRET=your_jwt_secret_key
+   ```
 
-   username: admin
+   Modifiez `MONGODB_URI` pour correspondre à l'URI de votre instance MongoDB et `JWT_SECRET` pour définir une clé secrète pour JWT.
 
-## musics route
- -> http://localhost:3000/api/musics (GET all musics)
+4. **Créez un Environnement de Développement Python**
 
- -> http://localhost:3000/api/musics/id (GET a music)
+   Pour isoler les dépendances Python, il est recommandé de créer un environnement virtuel. Voici comment le faire :
 
- ->http://localhost:3000/api/musics/user/id (GET all musics by userId)
- 
- -> http://localhost:3000/api/musics/upload (POST create a music)
- 
- **(header: user-id)**
- **(body: audioFile{file})**
+   - **Créez un Environnement Virtuel**
 
- -> http://localhost:3000/api/musics/update/id (UPDATE a music)
+     Dans le répertoire du projet, créez un environnement virtuel Python :
 
- -> http://localhost:3000/api/musics/delete/id (DELETE a music)
+     ```bash
+     python3 -m venv venv
+     ```
 
--> http://localhost:3000/api/musics/search/query (SEARCH a music)
+   - **Activez l'Environnement Virtuel**
+
+     - **Sur macOS/Linux :**
+
+       ```bash
+       source venv/bin/activate
+       ```
+
+     - **Sur Windows :**
+
+       ```bash
+       .\venv\Scripts\activate
+       ```
+
+   - **Installez les Dépendances Python**
+
+     Assurez-vous que le fichier `requirements.txt` est présent dans le répertoire du projet. Installez les dépendances Python requises :
+
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+     Si `requirements.txt` n'est pas disponible, vous pouvez installer la bibliothèque nécessaire manuellement :
+
+     ```bash
+     pip install mutagen
+     ```
+
+   - **Testez le Script Python**
+
+     Assurez-vous que le script Python `extract_metadata.py` fonctionne correctement en le testant avec un fichier audio.
+
+5. **Configurez le Script Python pour l'Extraction des Métadonnées**
+
+   Assurez-vous que le script Python `extract_metadata.py` est présent dans le répertoire. Vous devez également installer les dépendances Python nécessaires. Si vous n'avez pas encore installé les bibliothèques requises, vous pouvez les installer via `pip` :
+
+   ```bash
+   pip install mutagen
+   ```
+
+   Assurez-vous que le script Python fonctionne correctement en le testant avec un fichier audio.
+
+6. **Démarrez le Serveur Node.js**
+
+   Une fois les dépendances installées et les variables d'environnement configurées, vous pouvez démarrer le serveur :
+
+   ```bash
+   npm start
+   ```
+
+   Le serveur sera lancé sur le port spécifié dans votre fichier `.env` (par défaut, 5000).
+
+7. **Vérifiez que le Serveur Fonctionne**
+
+   Ouvrez un navigateur web ou utilisez un outil comme [Postman](https://www.postman.com/) pour vérifier que le serveur fonctionne en accédant à :
+
+   ```plaintext
+   http://localhost:5000/api/users
+   ```
+
+   Cette URL devrait répondre avec une liste d'utilisateurs (si votre base de données est configurée et que des utilisateurs existent).
+
+### Dépannage
+
+- **Problèmes de Connexion à MongoDB** : Vérifiez que MongoDB est en cours d'exécution et que l'URI dans `.env` est correct.
+- **Problèmes avec les Dépendances Python** : Assurez-vous que `mutagen` est installé et que le script Python est correct.
+- **Problèmes de Serveur** : Consultez les logs pour les erreurs et vérifiez les configurations dans le fichier `.env`.
+
+---
+
+Ce guide devrait vous aider à configurer et démarrer votre projet. N'hésitez pas à adapter les instructions en fonction des besoins spécifiques de votre projet.
