@@ -1,7 +1,8 @@
 const path = require("path");
-const { getMusicMetadata } = require("../utils/Metadata");
 const MusicModel = require("../models/MusicModel");
 const userModel = require("../models/UserModel");
+const { exec } = require("child_process");
+const { stdout, stderr } = require("process");
 
 exports.getAllMusics = async (req, res) => {
   try {
@@ -56,36 +57,62 @@ exports.uploadMusic = async (req, res) => {
   } catch (error) {
     return res.status(404).json({ message: "User not found" });
   }
+
   const filePath = path.join("./uploads/musics", req.file.filename);
-  console.log(req.file.filename);
-  let { title, artist, album, genre, duration, fileUrl, coverUrl } =
-    await getMusicMetadata(filePath);
+  exec(`python3 extract_metadata.py "${filePath}"`, async (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Failed to extract metadata" });
+    }
+    let metadata;
+    try {
+      metadata = JSON.parse(stdout);
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).json({ message: "Failed to extract metadata" });
+    }
 
-  if (title == "Unknown") {
-    title = req.file.filename;
-  }
+    console.log(req.file.filename);
 
-  const musicFind = await MusicModel.findOne({ title });
-  if (musicFind) {
-    return res.status(400).json({ message: "Music already exists" });
-  }
-  const music = new MusicModel({
-    title,
-    artist,
-    album,
-    genre,
-    duration,
-    fileUrl,
-    coverUrl,
-    uploadedBy: userId,
+    let { title, artist, album, genre, duration, cover_url } = metadata;
+    const fileUrl = filePath;
+    const coverUrl = cover_url ? cover_url : null;
+
+    if (title === "Unknown") {
+      title = req.file.filename;
+    }
+
+    const musicFind = await MusicModel.findOne({ title });
+    if (musicFind) {
+      return res.status(400).json({ message: "Music already exists" });
+    }
+
+    const music = new MusicModel({
+      title,
+      artist,
+      album,
+      genre,
+      duration,
+      fileUrl,
+      coverUrl,
+      uploadedBy: userId,
+    });
+
+    try {
+      const newMusic = await music.save();
+      if (newMusic) {
+        const user = await userModel.findById(userId);
+        if (user) {
+          user.musicUploads.push(newMusic._id);
+          await user.save();
+        }
+      }
+      res.status(201).json(newMusic);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: error.message });
+    }
   });
-  try {
-    const newMusic = await music.save();
-    res.status(201).json(newMusic);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: error.message });
-  }
 };
 
 exports.deleteMusic = async (req, res) => {

@@ -12,7 +12,7 @@ router.get('/:id', getMusic)
 router.get('/user/:id', getMusicsByUser)
 
 
-router.post('/upload', upload.single("musicfile"),uploadMusic )
+router.post('/upload', upload.single("audioFile"),uploadMusic )
 
 router.delete('/delete/:id', deleteMusic)
 

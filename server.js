@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database.js');
 const cors = require('cors');
+const { upload } = require('./utils/Upload.js');
 dotenv.config();
 
 
@@ -13,6 +14,7 @@ connectDB();
 app.use(cors());
 app.use(express.json({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
+
 
 app.use('/api/users', require('./routes/UserRoute'));
 

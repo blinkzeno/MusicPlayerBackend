@@ -1,40 +1,51 @@
+const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 
+// Crée une instance Express
+const app = express();
+
+// Configuration du stockage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = 'uploads/musics';
-        
-        // Check if the directory exists
-        if (!fs.existsSync(dir)){
-            // Create the directory
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        
-        cb(null, dir);
+        const uploadDir = 'uploads/musics/';
+
+        fs.ensureDir(uploadDir)
+            .then(() =>cb(null, uploadDir))
+            .catch(err =>cb(err));
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        // Traite le nom du fichier pour éviter les doublons
+        const originalName = file.originalname;
+        const fileName = originalName.replace(/\s+/g, '-').toLowerCase();
+        const ext = path.extname(fileName);
+        const baseName = path.basename(fileName, ext);
+        const finalName = `${baseName}-${Date.now()}${ext}`;
+        cb(null, finalName); // Nom final du fichier
     }
 });
 
-const upload = multer({ 
+// Initialisation de l'upload avec multer
+const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB file size limit
     fileFilter: (req, file, cb) => {
-        const allowedExtensions = /mp3|wav|flac/;
-        const allowedMimeTypes = /audio\/mpeg|audio\/wav|audio\/flac/;
+        // Vérification du type de fichier (formats audio)
+        const fileTypes = /m4a|mp3|aac|wav|flac/;
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
 
-        const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedMimeTypes.test(file.mimetype);
+        // Ajout de plusieurs types MIME pour .m4a
+        const mimetype = /audio\/mp4|audio\/x-m4a|audio\/mpeg|audio\/mp3|audio\/aac|audio\/wav|audio\/flac/.test(file.mimetype);
 
-        if (extname && mimetype) {
+        if (mimetype && extname) {
             return cb(null, true);
         } else {
-            cb(new Error('Only audio files are allowed!'));
+            cb(new Error('Type de fichier non supporté. Seuls les fichiers audio sont acceptés.'));
         }
     }
 });
+
+
+
 
 module.exports = { upload };
