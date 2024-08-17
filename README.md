@@ -1,4 +1,3 @@
-Voici la mise à jour du guide d'installation avec les étapes pour créer un environnement de développement Python :
 
 ---
 
