@@ -5,7 +5,6 @@ const { exec } = require("child_process");
 const { stdout, stderr } = require("process");
 const fs = require("fs");
 
-
 exports.getAllMusics = async (req, res) => {
   try {
     // Recherche de toutes les musiques dans la base de données
@@ -164,8 +163,6 @@ exports.uploadMusic = async (req, res) => {
   );
 };
 
-
-
 exports.deleteMusic = async (req, res) => {
   const { id } = req.params;
 
@@ -200,10 +197,14 @@ exports.deleteMusic = async (req, res) => {
 
     res.status(200).json({ message: "Musique supprimée avec succès" });
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la suppression de la musique", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Erreur lors de la suppression de la musique",
+        error: error.message,
+      });
   }
 };
-
 
 exports.updateMusic = async (req, res) => {
   // Récupère l'ID de la musique à partir des paramètres de la requête
