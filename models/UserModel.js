@@ -31,10 +31,13 @@ const userSchema = new mongoose.Schema({
     default: [],        // La valeur par défaut est un tableau vide
   },
   // Définition du champ 'favPlaylists'
-  favPlaylists: {
-    type: Array,        // Le type de données est un tableau
-    default: [],        // La valeur par défaut est un tableau vide
-  }
+  favPlaylists:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Playlist',
+    },
+  ],
+  
 });
 
 // Création du modèle 'User' à partir du schéma défini
